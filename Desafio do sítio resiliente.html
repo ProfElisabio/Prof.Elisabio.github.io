@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio do Sítio Resiliente</title>
+    <!-- Carrega o TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carrega a fonte Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Define a fonte Inter como padrão */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilo para a barra de scroll do log */
+        #logJogo::-webkit-scrollbar,
+        #modalInstrucoes div::-webkit-scrollbar {
+            width: 8px;
+        }
+        #logJogo::-webkit-scrollbar-track,
+        #modalInstrucoes div::-webkit-scrollbar-track {
+            background: #f1f5f9; /* gray-100 */
+        }
+        #logJogo::-webkit-scrollbar-thumb,
+        #modalInstrucoes div::-webkit-scrollbar-thumb {
+            background: #94a3b8; /* gray-400 */
+            border-radius: 4px;
+        }
+        #logJogo::-webkit-scrollbar-track {
+            background: #2d3748; /* gray-800 */
+        }
+        #logJogo::-webkit-scrollbar-thumb {
+            background: #718096; /* gray-500 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <!-- Container Principal -->
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- Cabeçalho -->
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-green-800">Desafio do Sítio Resiliente</h1>
+            <p class="text-lg text-gray-600">Faça a transição agroecológica do Sítio Boa Esperança</p>
+            <!-- Botão para abrir instruções -->
+            <button id="btnInstrucoes" class="mt-2 text-sm text-blue-600 hover:underline font-medium">
+                Como Jogar? (Leia-me)
+            </button>
+        </header>
+
+        <!-- Painel de Status (Ficha do Sítio) -->
+        <section id="painelStatus" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 p-4 bg-white rounded-lg shadow-md mb-6">
+            <!-- ... (código do painel de status existente) ... -->
+            <div class="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg">
+                <span class="text-sm font-semibold text-gray-500">CICLO ATUAL</span>
+                <span id="statsCiclo" class="text-3xl font-bold text-gray-800">1 / 5</span>
+            </div>
+            <div class="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg">
+                <span class="text-sm font-semibold text-gray-500">💰 CAIXA</span>
+                <span id="statsCaixa" class="text-3xl font-bold text-green-600">$1000</span>
+            </div>
+            <div class="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg">
+                <span class="text-sm font-semibold text-gray-500">DEVEDOR</span>
+                <span id="statsDivida" class="text-3xl font-bold text-red-600">$3000</span>
+            </div>
+            <!-- Indicadores com Barras -->
+            <div class="col-span-2 md:col-span-3 lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-3 bg-gray-50 rounded-lg">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-sm font-semibold text-gray-500">🌱 SAÚDE DO SOLO</span>
+                        <span id="statsSoloVal" class="text-sm font-bold text-yellow-700">20%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4">
+                        <div id="statsSoloBarra" class="bg-yellow-600 h-4 rounded-full transition-all duration-500" style="width: 20%"></div>
+                    </div>
+                </div>
+                <div class="p-3 bg-gray-50 rounded-lg">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-sm font-semibold text-gray-500">🦋 BIODIVERSIDADE</span>
+                        <span id="statsBioVal" class="text-sm font-bold text-blue-700">10%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4">
+                        <div id="statsBioBarra" class="bg-blue-600 h-4 rounded-full transition-all duration-500" style="width: 10%"></div>
+                    </div>
+                </div>
+                <div class="p-3 bg-gray-50 rounded-lg">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-sm font-semibold text-gray-500">💧 RESIL. HÍDRICA</span>
+                        <span id="statsAguaVal" class="text-sm font-bold text-cyan-700">30%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4">
+                        <div id="statsAguaBarra" class="bg-cyan-600 h-4 rounded-full transition-all duration-500" style="width: 30%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Área Principal do Jogo -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Coluna 1: Problema Atual -->
+            <div class="lg:col-span-1">
+                <h2 class="text-xl font-bold text-gray-800 mb-3">Problema do Ciclo</h2>
+                <div id="areaProblema" class="bg-red-100 border-2 border-red-400 rounded-lg p-4 min-h-[150px] shadow-inner">
+                    <!-- O problema atual será inserido aqui pelo JS -->
+                    <p class="text-gray-600 text-center p-6">Aguardando o início do ciclo...</p>
+                </div>
+                <button id="btnProximoCiclo" class="mt-4 w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-green-700 transition duration-300">
+                    Iniciar Ciclo 1
+                </button>
+            </div>
+
+            <!-- Coluna 2: Mão do Jogador (Soluções) -->
+            <div class="lg:col-span-1">
+                <h2 class="text-xl font-bold text-gray-800 mb-3">Suas Soluções (Mão)</h2>
+                <div id="areaMao" class="space-y-4 h-[400px] lg:h-[500px] overflow-y-auto p-2 bg-gray-200 rounded-lg shadow-inner">
+                    <!-- Cartas do jogador serão inseridas aqui -->
+                    <p class="text-gray-600 text-center p-6">Suas cartas aparecerão aqui.</p>
+                </div>
+            </div>
+
+            <!-- Coluna 3: Log de Ações -->
+            <div class="lg:col-span-1">
+                <h2 class="text-xl font-bold text-gray-800 mb-3">Histórico de Ações</h2>
+                <div id="logJogo" class="space-y-2 h-[400px] lg:h-[500px] overflow-y-auto p-4 bg-gray-800 text-white text-sm rounded-lg shadow-inner font-mono">
+                    <p class="text-green-400">Bem-vindo ao Sítio Boa Esperança! Clique em "Iniciar Ciclo 1".</p>
+                </div>
+            </div>
+
+            <!-- Coluna 4: Tabela de Relatório (REMOVIDA) -->
+            
+        </section>
+    </div>
+
+    <!-- Modal de Fim de Jogo -->
+    <div id="modalFimJogo" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full text-center">
+            <h2 id="modalTitulo" class="text-3xl font-bold text-gray-800 mb-4">Fim de Jogo!</h2>
+            <p id="modalMensagem" class="text-lg text-gray-600 mb-8">O sítio se tornou resiliente!</p>
+            
+            <!-- Botão 1: Ver Histórico (ATUALIZADO) -->
+            <button id="btnVerHistorico" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
+                Analisar Histórico de Ações
+            </button>
+            
+            <!-- Botão 2: Reiniciar (Cor alterada e margem adicionada) -->
+            <button id="btnReiniciar" class="w-full bg-gray-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-gray-600 transition duration-300 mt-4">
+                Jogar Novamente
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Instruções (NOVO) -->
+    <div id="modalInstrucoes" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 hidden z-40">
+        <div class="bg-white rounded-lg shadow-2xl p-6 md:p-8 max-w-2xl w-full text-left max-h-[90vh] overflow-y-auto">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Bem-vindo ao Desafio do Sítio Resiliente!</h2>
+            
+            <h3 class="text-xl font-semibold text-green-700 mt-4">A Situação (O Contexto)</h3>
+            <p class="text-gray-600 mb-2">Você e seu grupo são estudantes que acabaram de "herdar" o Sítio Boa Esperança. Este sítio foi gerenciado por décadas usando métodos da "Revolução Verde": muito trator, muito agrotóxico (veneno) e muito adubo químico (NPK).</p>
+            <p class="text-gray-600 mb-2"><strong>O resultado?</strong> O sítio está com problemas sérios:</p>
+            <ul class="list-disc list-inside text-gray-600 mb-4 space-y-1">
+                <li>O <strong class="text-yellow-700">Solo está Compactado e Pobre</strong> (Saúde do Solo: 20%).</li>
+                <li>Quase não há vida (insetos, pássaros, plantas nativas) (<strong class="text-blue-700">Biodiversidade: 10%</strong>).</li>
+                <li>A água da chuva bate no solo e escorre, causando erosão (<strong class="text-cyan-700">Resil. Hídrica: 30%</strong>).</li>
+                <li>O sítio tem uma <strong class="text-red-600">Dívida alta</strong> no banco ($3000).</li>
+            </ul>
+
+            <h3 class="text-xl font-semibold text-green-700 mt-4">Seu Objetivo (A Missão)</h3>
+            <p class="text-gray-600 mb-2">Sua missão é fazer a <strong>transição agroecológica</strong> em 5 ciclos (5 anos). Você precisa tomar decisões para transformar o Sítio Boa Esperança em um lugar próspero, saudável e resiliente.</p>
+            <p class="text-gray-600 mb-4"><strong>Vitória:</strong> Ao final dos 5 ciclos, o sítio será "Resiliente" se a Saúde do Solo for > 70%, a Biodiversidade > 60% e a Dívida < $1000.</p>
+
+            <h3 class="text-xl font-semibold text-green-700 mt-4">Como Jogar (As Regras)</h3>
+            <ol class="list-decimal list-inside text-gray-600 space-y-2">
+                <li><strong>1. Iniciar o Ciclo:</strong> Clique no botão "Iniciar Ciclo X". Um <strong class="text-red-700">Problema</strong> irá aparecer (como uma praga, uma seca, etc.).</li>
+                <li><strong>2. Tomar a Decisão:</strong> Olhe suas "Cartas de Solução". Discuta com seu grupo. Você pode usar:
+                    <ul class="list-disc list-inside ml-4 mt-1">
+                        <li><strong>Soluções Convencionais (Amarelas):</strong> Rápidas, mas caras e muitas vezes causam danos (matam a biodiversidade, pioram o solo).</li>
+                        <li><strong>Soluções Agroecológicas (Verdes):</strong> Mais baratas (ou demoradas), mas "curam" o sítio (melhoram o solo, aumentam a biodiversidade).</li>
+                    </ul>
+                </li>
+                <li><strong>3. Ver as Consequências:</strong> Ao jogar uma carta, veja o que acontece no "Histórico de Ações" (o terminal preto).</li>
+                <li><strong>4. Sorte e Manutenção:</strong> No final do ciclo, o jogo rola um "dado" (Sorte), calcula sua renda (baseada na Saúde do Solo) e paga os juros da dívida. Você também <strong>aprende novas técnicas</strong>, recebendo novas cartas (1 Agroecológica e 1 Convencional) para o próximo ciclo.</li>
+                <li><strong>5. Analisar o Histórico:</strong> Ao final do jogo (ou durante), leia o "Histórico de Ações" para coletar os dados de cada ciclo e construir sua própria tabela de resultados.</li>
+            </ol>
+            
+            <button id="btnFecharInstrucoes" class="mt-8 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
+                Entendi, vamos jogar!
+            </button>
+        </div>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+        // --- 1. BANCO DE DADOS DAS CARTAS ---
+        // (Baseado no arquivo MATERIAIS_DO_JOGO.md)
+
+        const BD_PROBLEMAS = [
+            {
+                id: 'praga_pulgoes',
+                titulo: 'Praga: Ataque de Pulgões',
+                descricao: 'Uma infestação de pulgões está sugando a seiva da sua horta e da sua lavoura principal. A produção está ameaçada.',
+            },
+            {
+                id: 'solo_compactado',
+                titulo: 'Solo Compactado',
+                descricao: 'O uso de máquinas pesadas e a falta de matéria orgânica deixaram o solo duro. A água não infiltra e as raízes não crescem. A produtividade caiu 30%.',
+            },
+            {
+                id: 'seca',
+                titulo: 'Seca Súbita',
+                descricao: 'Uma estiagem inesperada atingiu a região. Suas fontes de água estão baixando rapidamente e a monocultura está morrendo de sede.',
+            },
+            {
+                id: 'aumento_insumos',
+                titulo: 'Aumento dos Insumos',
+                descricao: 'O preço do NPK e dos agrotóxicos dobrou! Seus custos de produção vão disparar.',
+                efeito: { caixa: -200, log: "Preço dos insumos disparou! Custo extra de $200." } // Efeito imediato para simplificar
+            },
+            {
+                id: 'doenca_fungica',
+                titulo: 'Doença: Ferrugem',
+                descricao: 'Um fungo está se espalhando rapidamente pela sua lavoura devido à baixa diversidade e alta umidade.',
+            }
+        ];
+
+        const BD_SOLUCOES_CONV = [
+            {
+                id: 'conv_inseticida',
+                titulo: 'Aplicar Inseticida Químico',
+                descricao: 'Resolve Pragas (Ex: Pulgões).',
+                tipo: 'convencional',
+                resolve: ['praga_pulgoes', 'doenca_fungica'], // Fungicida/Inseticida genérico
+                efeito: {
+                    caixa: -300,
+                    saudeSolo: -5,
+                    biodiversidade: -10,
+                    log: "Praga controlada. -10% Biodiversidade, -5% Saúde do Solo."
+                }
+            },
+            {
+                id: 'conv_adubo_npk',
+                titulo: 'Aplicar Adubação Química (NPK)',
+                descricao: 'Resolve Solo Pobre (temporariamente).',
+                tipo: 'convencional',
+                resolve: ['solo_compactado'], // Ajuda a planta a crescer apesar do solo ruim
+                efeito: {
+                    caixa: -400,
+                    saudeSolo: -5,
+                    log: "Planta cresce rápido. -5% Saúde do Solo (acidificação)."
+                }
+            },
+            {
+                id: 'conv_arado',
+                titulo: 'Arar o Solo Profundamente (Arado)',
+                descricao: 'Resolve Solo Compactado (temporariamente).',
+                tipo: 'convencional',
+                resolve: ['solo_compactado'],
+                efeito: {
+                    caixa: -200,
+                    saudeSolo: -10,
+                    log: "Solo descompactado. -10% Saúde do Solo (erosão)."
+                }
+            },
+            {
+                id: 'conv_irrigacao',
+                titulo: 'Instalar Irrigação por Aspersão',
+                descricao: 'Resolve Seca (alto custo de água e energia).',
+                tipo: 'convencional',
+                resolve: ['seca'],
+                efeito: {
+                    caixa: -500,
+                    resilienciaHidrica: -5,
+                    log: "Lavoura salva da seca. -5% Resiliência Hídrica (gasto de aquífero)."
+                }
+            }
+        ];
+
+        const BD_SOLUCOES_AGRO = [
+            {
+                id: 'agro_compostagem',
+                titulo: 'Compostagem e Adubação Orgânica',
+                descricao: 'Resolve Solo Pobre / Lixo orgânico.',
+                tipo: 'agroecologica',
+                resolve: ['solo_compactado'], // Melhora a estrutura do solo
+                efeito: {
+                    caixa: -100,
+                    saudeSolo: 10,
+                    resilienciaHidrica: 5,
+                    log: "+10% Saúde do Solo, +5% Resil. Hídrica."
+                }
+            },
+            {
+                id: 'agro_policultura',
+                titulo: 'Policultura e Consórcio (Ex: Milho + Feijão)',
+                descricao: 'Resolve Pragas / Monocultura / Solo Pobre.',
+                tipo: 'agroecologica',
+                resolve: ['praga_pulgoes', 'solo_compactado', 'doenca_fungica'],
+                efeito: {
+                    caixa: -50,
+                    saudeSolo: 5,
+                    biodiversidade: 10,
+                    log: "+10% Biodiversidade, +5% Saúde do Solo."
+                }
+            },
+            {
+                id: 'agro_adubacao_verde',
+                titulo: 'Adubação Verde (Ex: Crotalária)',
+                descricao: 'Resolve Solo Compactado / Solo Pobre.',
+                tipo: 'agroecologica',
+                resolve: ['solo_compactado'],
+                efeito: {
+                    caixa: -100,
+                    saudeSolo: 15,
+                    biodiversidade: 5,
+                    log: "+15% Saúde do Solo, +5% Biodiversidade."
+                }
+            },
+            {
+                id: 'agro_quebra_vento',
+                titulo: 'Plantio de Quebra-Ventos e Cercas Vivas',
+                descricao: 'Resolve Vento / Erosão / Falta de Polinizadores.',
+                tipo: 'agroecologica',
+                resolve: ['seca'], // Ajuda a manter a umidade
+                efeito: {
+                    caixa: -150,
+                    biodiversidade: 10,
+                    resilienciaHidrica: 5,
+                    log: "+10% Biodiversidade, +5% Resil. Hídrica."
+                }
+            },
+            {
+                id: 'agro_cisterna',
+                titulo: 'Captação de Água de Chuva (Cisterna)',
+                descricao: 'Armazena água da chuva para uso na estiagem.',
+                tipo: 'agroecologica',
+                resolve: ['seca'], // Resolve o problema da seca
+                efeito: {
+                    caixa: -200, // Custo de instalação
+                    resilienciaHidrica: 15,
+                    log: "Água da chuva armazenada! +15% Resil. Hídrica."
+                }
+            },
+            {
+                id: 'agro_controle_biologico',
+                titulo: 'Controle Biológico (Joaninhas/Vespas)',
+                descricao: 'Atrai inimigos naturais para pragas.',
+                tipo: 'agroecologica',
+                resolve: ['praga_pulgoes'],
+                efeito: {
+                    caixa: -100,
+                    biodiversidade: 10,
+                    log: "Inimigos naturais controlando a praga. +10% Biodiversidade."
+                }
+            },
+            // --- NOVA CARTA ADICIONADA ---
+            {
+                id: 'agro_saf',
+                titulo: 'Sistemas Agroflorestais (SAF)',
+                descricao: 'Plantar árvores e cultivos juntos. Recupera o solo e atrai vida.',
+                tipo: 'agroecologica',
+                resolve: ['solo_compactado', 'seca', 'praga_pulgoes'],
+                efeito: {
+                    caixa: -250, // Custo de mudas e implementação
+                    saudeSolo: 15,
+                    biodiversidade: 15,
+                    resilienciaHidrica: 10,
+                    log: "Sistema Agroflorestal iniciado! +15% Solo, +15% Bio, +10% Água."
+                }
+            }
+        ];
+
+        // --- 2. ESTADO DO JOGO ---
+
+        let estadoJogo;
+
+        // Decks embaralhados
+        let deckProblemas = [];
+        let deckAgro = [];
+        let deckConv = [];
+
+        const estadoInicial = {
+            cicloAtual: 1,
+            saudeSolo: 20,
+            biodiversidade: 10,
+            resilienciaHidrica: 30,
+            caixa: 1000,
+            divida: 3000,
+            maoJogador: [],
+            problemaAtual: null,
+            jogoAtivo: true,
+            faseAtiva: 'inicio' // 'inicio', 'decisao', 'fim_ciclo'
+            // logDoCiclo e relatorioFinal REMOVIDOS
+        };
+
+        // --- 3. REFERÊNCIAS DE DOM ---
+
+        const statsCiclo = document.getElementById('statsCiclo');
+        const statsCaixa = document.getElementById('statsCaixa');
+        const statsDivida = document.getElementById('statsDivida');
+        const statsSoloVal = document.getElementById('statsSoloVal');
+        const statsSoloBarra = document.getElementById('statsSoloBarra');
+        const statsBioVal = document.getElementById('statsBioVal');
+        const statsBioBarra = document.getElementById('statsBioBarra');
+        const statsAguaVal = document.getElementById('statsAguaVal');
+        const statsAguaBarra = document.getElementById('statsAguaBarra');
+
+        const areaProblema = document.getElementById('areaProblema');
+        const areaMao = document.getElementById('areaMao');
+        const logJogo = document.getElementById('logJogo');
+        const btnProximoCiclo = document.getElementById('btnProximoCiclo');
+
+        const modalFimJogo = document.getElementById('modalFimJogo');
+        const modalTitulo = document.getElementById('modalTitulo');
+        const modalMensagem = document.getElementById('modalMensagem');
+        const btnReiniciar = document.getElementById('btnReiniciar');
+
+        // NOVAS REFERÊNCIAS
+        const btnInstrucoes = document.getElementById('btnInstrucoes');
+        const btnFecharInstrucoes = document.getElementById('btnFecharInstrucoes');
+        const modalInstrucoes = document.getElementById('modalInstrucoes');
+        // logCorpoTabela REMOVIDO
+        const btnVerHistorico = document.getElementById('btnVerHistorico'); // ATUALIZADO
+
+        // --- 4. FUNÇÕES DE UTILIDADE ---
+
+        function embaralhar(array) {
+            // Cria uma cópia profunda para não alterar os BDs originais
+            let arrCopiado = JSON.parse(JSON.stringify(array));
+            for (let i = arrCopiado.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arrCopiado[i], arrCopiado[j]] = [arrCopiado[j], arrCopiado[i]];
+            }
+            return arrCopiado;
+        }
+
+        function adicionarLog(mensagem, tipo = 'info') {
+            let cor = 'text-gray-300';
+            if (tipo === 'sucesso') cor = 'text-green-400';
+            if (tipo === 'erro') cor = 'text-red-400';
+            if (tipo === 'aviso') cor = 'text-yellow-400';
+            
+            logJogo.innerHTML += `<p class="${cor}">> ${mensagem}</p>`;
+            // Auto-scroll para o final
+            logJogo.scrollTop = logJogo.scrollHeight;
+        }
+
+        function formatarDinheiro(valor) {
+            return `R$ ${valor.toFixed(0)}`;
+        }
+        
+        // Garante que os status fiquem entre 0 e 100
+        function clamp(valor, min = 0, max = 100) {
+            return Math.max(min, Math.min(max, valor));
+        }
+
+        // --- 5. FUNÇÕES DE RENDERIZAÇÃO (UI) ---
+
+        function atualizarPainelUI() {
+            const estado = estadoJogo;
+            statsCiclo.textContent = `${estado.cicloAtual} / 5`;
+            statsCaixa.textContent = formatarDinheiro(estado.caixa);
+            statsDivida.textContent = formatarDinheiro(estado.divida);
+
+            statsCaixa.className = `text-3xl font-bold ${estado.caixa >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            
+            statsSoloVal.textContent = `${estado.saudeSolo}%`;
+            statsSoloBarra.style.width = `${estado.saudeSolo}%`;
+            
+            statsBioVal.textContent = `${estado.biodiversidade}%`;
+            statsBioBarra.style.width = `${estado.biodiversidade}%`;
+
+            statsAguaVal.textContent = `${estado.resilienciaHidrica}%`;
+            statsAguaBarra.style.width = `${estado.resilienciaHidrica}%`;
+        }
+
+        function renderizarProblema() {
+            const problema = estadoJogo.problemaAtual;
+            if (problema) {
+                areaProblema.innerHTML = `
+                    <h3 class="text-lg font-bold text-red-800">${problema.titulo}</h3>
+                    <p class="text-sm text-red-700">${problema.descricao}</p>
+                `;
+            } else {
+                 areaProblema.innerHTML = `<p class="text-gray-600 text-center p-6">Nenhum problema neste momento.</p>`;
+            }
+        }
+
+        function renderizarMao() {
+            areaMao.innerHTML = '';
+            if (estadoJogo.maoJogador.length === 0) {
+                areaMao.innerHTML = `<p class="text-gray-600 text-center p-6">Você não tem cartas de solução.</p>`;
+                return;
+            }
+
+            estadoJogo.maoJogador.forEach((carta, index) => {
+                // INÍCIO DA CORREÇÃO: Adiciona uma verificação de segurança
+                // Isso previne o erro 'Cannot read properties of undefined' caso
+                // uma carta inválida entre na mão do jogador.
+                if (!carta || typeof carta.tipo === 'undefined') {
+                    console.error("renderizarMao: Carta inválida ou indefinida encontrada no índice", index, carta);
+                    return; // Pula esta iteração para evitar o crash
+                }
+                // FIM DA CORREÇÃO
+
+                const corBorda = carta.tipo === 'agroecologica' ? 'border-green-600' : 'border-yellow-600';
+                const corTitulo = carta.tipo === 'agroecologica' ? 'text-green-800' : 'text-yellow-800';
+                
+                const cartaEl = document.createElement('div');
+                cartaEl.className = `bg-white p-4 rounded-lg shadow-md border-l-4 ${corBorda} transition duration-300 hover:shadow-lg`;
+                
+                cartaEl.innerHTML = `
+                    <h4 class="font-bold ${corTitulo}">${carta.titulo}</h4>
+                    <p class="text-sm text-gray-600 mb-3">${carta.descricao}</p>
+                    <button 
+                        onclick="jogarCarta(${index})" 
+                        ${estadoJogo.faseAtiva !== 'decisao' ? 'disabled' : ''}
+                        class="w-full text-sm bg-blue-600 text-white font-semibold py-2 px-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        Jogar Solução
+                    </button>
+                `;
+                areaMao.appendChild(cartaEl);
+            });
+        }
+
+        // Função renderizarTabelaRelatorio() REMOVIDA
+        
+        // --- 6. LÓGICA PRINCIPAL DO JOGO ---
+
+        function iniciarJogo() {
+            // 1. Resetar estado
+            estadoJogo = JSON.parse(JSON.stringify(estadoInicial));
+            
+            // 2. Limpar logs e UI
+            logJogo.innerHTML = '';
+            modalFimJogo.classList.add('hidden');
+            
+            // Bloco de "Linha Inicial" do relatório REMOVIDO
+
+            // 3. Embaralhar decks
+            deckProblemas = embaralhar(BD_PROBLEMAS);
+            deckAgro = embaralhar(BD_SOLUCOES_AGRO);
+            deckConv = embaralhar(BD_SOLUCOES_CONV); 
+
+            // 4. Distribuir mão inicial (3 Agro, 3 Conv)
+            estadoJogo.maoJogador.push(deckAgro.pop());
+            estadoJogo.maoJogador.push(deckAgro.pop());
+            estadoJogo.maoJogador.push(deckAgro.pop()); // Adicionada
+            estadoJogo.maoJogador.push(deckConv.pop());
+            estadoJogo.maoJogador.push(deckConv.pop());
+            estadoJogo.maoJogador.push(deckConv.pop()); // Adicionada
+
+            // 5. Atualizar UI
+            adicionarLog("Bem-vindo ao Sítio Boa Esperança!", "sucesso");
+            adicionarLog("Você recebeu suas 6 cartas iniciais (3 Agro, 3 Conv).", "info");
+            atualizarPainelUI();
+            renderizarMao();
+            renderizarProblema(); // Limpa o problema
+            // renderizarTabelaRelatorio() REMOVIDA
+            
+            // 6. Configurar botão
+            btnProximoCiclo.textContent = `Iniciar Ciclo 1`;
+            btnProximoCiclo.disabled = false;
+
+            // 7. Mostrar instruções (NOVO)
+            modalInstrucoes.classList.remove('hidden');
+        }
+
+        // FASE 1: O PROBLEMA
+        function iniciarCiclo() {
+            if (!estadoJogo.jogoAtivo) return;
+
+            adicionarLog(`--- Iniciando Ciclo ${estadoJogo.cicloAtual} / 5 ---`, 'aviso');
+            estadoJogo.faseAtiva = 'decisao';
+
+            // logDoCiclo REMOVIDO
+            
+            // 1. Puxar carta de problema
+            const problema = deckProblemas.pop();
+            estadoJogo.problemaAtual = problema;
+            // logDoCiclo.problema REMOVIDO
+            
+            // 2. Aplicar efeito imediato (se houver, ex: Aumento de Insumos)
+            if (problema.efeito) {
+                aplicarEfeitos(problema.efeito);
+            }
+            
+            adicionarLog(`PROBLEMA: ${problema.titulo}`, 'erro');
+            adicionarLog("Escolha uma carta de Solução da sua mão para resolver.");
+            
+            // 3. Atualizar UI
+            renderizarProblema();
+            renderizarMao(); // Habilita os botões de jogar
+            btnProximoCiclo.disabled = true;
+            atualizarPainelUI();
+        }
+
+        // FASE 2: DECISÃO + FASE 3: CONSEQUÊNCIAS
+        function jogarCarta(indexMao) {
+            if (estadoJogo.faseAtiva !== 'decisao') return;
+            estadoJogo.faseAtiva = 'fim_ciclo'; // Trava outras ações
+
+            // 1. Pegar a carta e remover da mão
+            const cartaJogada = estadoJogo.maoJogador.splice(indexMao, 1)[0];
+            // logDoCiclo.acao REMOVIDO
+
+            // --- INÍCIO DA MODIFICAÇÃO ---
+            // Adiciona o custo da ação ao log
+            let logMensagem = `AÇÃO: Você jogou "${cartaJogada.titulo}".`;
+            const custoAcao = cartaJogada.efeito.caixa;
+
+            if (custoAcao && custoAcao < 0) {
+                logMensagem += ` (Custo: ${formatarDinheiro(Math.abs(custoAcao))}).`;
+            } else if (custoAcao && custoAcao > 0) {
+                logMensagem += ` (Ganho: ${formatarDinheiro(custoAcao)}).`;
+            } else {
+                logMensagem += ` (Sem custo financeiro).`;
+            }
+            adicionarLog(logMensagem, 'info');
+            // --- FIM DA MODIFICAÇÃO ---
+
+            // 2. Aplicar efeitos da carta (custo, bônus, etc.)
+            aplicarEfeitos(cartaJogada.efeito);
+
+            // 3. Verificar se resolveu o problema
+            const problema = estadoJogo.problemaAtual;
+            if (cartaJogada.resolve.includes(problema.id)) {
+                adicionarLog(`O problema "${problema.titulo}" foi resolvido!`, 'sucesso');
+                estadoJogo.problemaAtual = null;
+            } else {
+                adicionarLog(`A solução não resolveu o problema "${problema.titulo}"...`, 'erro');
+                // O problema persiste para o próximo ciclo? (Regra opcional)
+                // Por simplicidade, vamos assumir que o problema se dissipa.
+                estadoJogo.problemaAtual = null;
+            }
+            
+            renderizarProblema(); // Limpa o problema
+            
+            // 4. Executar fases seguintes
+            executarFaseSorte();
+        }
+        
+        function aplicarEfeitos(efeito) {
+            if (efeito.caixa) estadoJogo.caixa += efeito.caixa;
+            if (efeito.divida) estadoJogo.divida += efeito.divida;
+            if (efeito.saudeSolo) estadoJogo.saudeSolo = clamp(estadoJogo.saudeSolo + efeito.saudeSolo);
+            if (efeito.biodiversidade) estadoJogo.biodiversidade = clamp(estadoJogo.biodiversidade + efeito.biodiversidade);
+            if (efeito.resilienciaHidrica) estadoJogo.resilienciaHidrica = clamp(estadoJogo.resilienciaHidrica + efeito.resilienciaHidrica);
+            if (efeito.log) adicionarLog(efeito.log, 'info');
+
+            atualizarPainelUI(); // Atualiza imediatamente
+        }
+
+        // FASE 4: SORTE (Dado)
+        function executarFaseSorte() {
+            adicionarLog("Rodando o dado da Sorte (Clima/Mercado)...", 'info');
+            const roll = Math.floor(Math.random() * 6) + 1;
+            
+            if (roll <= 2) {
+                // 1-2: Ruim
+                const custo = 200;
+                estadoJogo.caixa -= custo;
+                adicionarLog(`SORTE (1-2): Ruim! Evento climático negativo. Você perdeu ${formatarDinheiro(custo)}.`, 'erro');
+            } else if (roll <= 4) {
+                // 3-4: Neutro
+                adicionarLog("SORTE (3-4): Neutro. Ano normal, sem surpresas.", 'info');
+            } else {
+                // 5-6: Bom
+                const ganho = 300;
+                estadoJogo.caixa += ganho;
+                adicionarLog(`SORTE (5-6): Bom! Chuvas boas e mercado favorável. Você ganhou ${formatarDinheiro(ganho)}.`, 'sucesso');
+            }
+            
+            executarFaseManutencao();
+        }
+
+        // FASE 5: MANUTENÇÃO
+        function executarFaseManutencao() {
+            adicionarLog("FASE DE MANUTENÇÃO:", 'aviso');
+
+            // 1. Renda (baseada na Saúde do Solo)
+            // Renda = $500 base + (Saúde do Solo * $10)
+            const rendaBase = 500;
+            const rendaSolo = estadoJogo.saudeSolo * 10;
+            const rendaTotal = rendaBase + rendaSolo;
+            estadoJogo.caixa += rendaTotal;
+            adicionarLog(`Renda da colheita: ${formatarDinheiro(rendaTotal)} (Baseado na Saúde do Solo).`, 'sucesso');
+
+            // 2. Pagar Juros da Dívida (10%)
+            const juros = Math.floor(estadoJogo.divida * 0.10);
+            estadoJogo.caixa -= juros;
+            adicionarLog(`Pagamento de juros da dívida: ${formatarDinheiro(juros)}.`, 'erro');
+
+            // 3. Comprar/Receber novas cartas
+            // Simplificado: Puxa 1 Agro e 1 Conv
+            if (deckAgro.length > 0) {
+                const novaCartaAgro = deckAgro.pop();
+                // INÍCIO DA CORREÇÃO: Verificação extra
+                if (novaCartaAgro) { 
+                    estadoJogo.maoJogador.push(novaCartaAgro);
+                    adicionarLog(`Novo aprendizado: Você adicionou "${novaCartaAgro.titulo}" à sua mão.`, 'sucesso');
+                }
+                // FIM DA CORREÇÃO
+            }
+            if (deckConv.length > 0) {
+                const novaCartaConv = deckConv.pop();
+                 // INÍCIO DA CORREÇÃO: Verificação extra
+                if (novaCartaConv) {
+                    estadoJogo.maoJogador.push(novaCartaConv);
+                    adicionarLog(`Novo insumo: Você adicionou "${novaCartaConv.titulo}" à sua mão.`, 'aviso');
+                }
+                // FIM DA CORREÇÃO
+            }
+
+            // 4. Atualizar UI e preparar próximo ciclo
+            estadoJogo.cicloAtual++;
+            atualizarPainelUI();
+            renderizarMao();
+
+            // Bloco "Gerar linha do relatório" REMOVIDO
+
+            // 5. Verificar condições de fim de jogo
+            verificarFimDeJogo();
+        }
+
+        // --- 7. CONTROLE DE FIM DE JOGO ---
+
+        function verificarFimDeJogo() {
+            if (!estadoJogo.jogoAtivo) return; // Jogo já acabou
+
+            // Condição de Derrota (Falência)
+            if (estadoJogo.caixa < 0) {
+                adicionarLog("FALÊNCIA! Você não tem dinheiro para pagar os juros e custos.", 'erro');
+                finalizarJogo(false, "Falência!", "Você ficou sem dinheiro e não conseguiu pagar suas dívidas. O banco tomou o Sítio Boa Esperança.");
+                return;
+            }
+
+            // Condição de Fim dos Ciclos
+            if (estadoJogo.cicloAtual > 5) {
+                adicionarLog("Os 5 ciclos (anos) terminaram. Verificando resultado...", 'aviso');
+                
+                // Condição de Vitória
+                const venceu = estadoJogo.saudeSolo > 70 &&
+                             estadoJogo.biodiversidade > 60 &&
+                             estadoJogo.divida < 1000;
+                             
+                if (venceu) {
+                    finalizarJogo(true, "Vitória! Sítio Resiliente!", "Parabéns! Você fez a transição agroecológica. O solo está saudável, a biodiversidade floresce e suas finanças estão estáveis!");
+                } else {
+                    finalizarJogo(false, "Fim de Jogo", "Você sobreviveu aos 5 anos, mas o sítio ainda não é totalmente resiliente. Tente novamente e foque mais na saúde do solo e biodiversidade!");
+                }
+            } else {
+                // Se o jogo não acabou, reabilitar o botão
+                btnProximoCiclo.textContent = `Iniciar Ciclo ${estadoJogo.cicloAtual}`;
+                btnProximoCiclo.disabled = false;
+            }
+        }
+        
+        function finalizarJogo(vitoria, titulo, mensagem) {
+            estadoJogo.jogoAtivo = false;
+            btnProximoCiclo.disabled = true;
+            
+            modalTitulo.textContent = titulo;
+            modalMensagem.textContent = mensagem;
+            
+            if (vitoria) {
+                modalTitulo.className = "text-3xl font-bold text-green-700 mb-4";
+            } else {
+                modalTitulo.className = "text-3xl font-bold text-red-700 mb-4";
+            }
+            
+            modalFimJogo.classList.remove('hidden');
+        }
+
+        // --- 8. EVENT LISTENERS ---
+
+        btnProximoCiclo.addEventListener('click', iniciarCiclo);
+        btnReiniciar.addEventListener('click', iniciarJogo);
+
+        // NOVOS Listeners para o modal de instruções
+        btnInstrucoes.addEventListener('click', () => modalInstrucoes.classList.remove('hidden'));
+        btnFecharInstrucoes.addEventListener('click', () => modalInstrucoes.classList.add('hidden'));
+
+        // ATUALIZADO Listener para o botão de Análise do Histórico
+        btnVerHistorico.addEventListener('click', () => {
+            modalFimJogo.classList.add('hidden');
+            // Scrolla para o histórico de ações para análise
+            logJogo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        // --- 9. INICIAR O JOGO ---
+        window.onload = iniciarJogo;
+
+    </script>
+</body>
+</html>
